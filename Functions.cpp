@@ -135,7 +135,7 @@ void DrawLight(Line actLine, float f, bool change, float &ymax, bool showPos, in
         newLine.x1 = actLine.x2;
         newLine.y1 = actLine.y2;
         newLine.x2 = actLine.x2 + LenStep;
-		newLine.y2 = actLine.y2*(1-(LenStep/f)) + (actLine.y1 - actLine.y2)/(actLine.x1 - actLine.x2)*LenStep;
+	newLine.y2 = actLine.y2*(2-(LenStep/f)) - actLine.y1;
 
         ymax = maxim(absol(ymax), absol(actLine.y1));
         ymax = maxim(absol(ymax), absol(actLine.y2));
