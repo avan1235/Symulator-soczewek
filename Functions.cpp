@@ -131,7 +131,7 @@ void DrawLight(Line actLine, float f, bool change, float &ymax, bool showPos, in
     {
         DrawRedLine(actLine.x1, convertedYToDisplay(actLine.y1, YSize), actLine.x2, convertedYToDisplay(actLine.y2, YSize), window);
         
-		Line newLine;
+	Line newLine;
         newLine.x1 = actLine.x2;
         newLine.y1 = actLine.y2;
         newLine.x2 = actLine.x2 + LenStep;
