@@ -62,44 +62,51 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             else
             {
-                sf::ContextSettings settings;
-                settings.antialiasingLevel = 10;
+                if(globalwindow == NULL)
+				{
+					sf::ContextSettings settings;
+					settings.antialiasingLevel = 10;
 
-                sf::RenderWindow window(sf::VideoMode(XSize, YSize), "Symulacja", sf::Style::Default, settings);
-				globalwindow = &window;
-                while(window.isOpen())
-                {
-                    sf::Event event;
+					sf::RenderWindow window(sf::VideoMode(XSize, YSize), "Symulacja", sf::Style::Default, settings);
 					globalwindow = &window;
-                    while(window.pollEvent(event))
-                    {
-                        if(event.type == sf::Event::Closed)
-                        {
-                            window.close();
-                            globalwindow = NULL;
+					while(window.isOpen())
+					{
+						sf::Event event;
+						globalwindow = &window;
+						while(window.pollEvent(event))
+						{
+							if(event.type == sf::Event::Closed)
+							{
+								window.close();
+								globalwindow = NULL;
 
-                        }
-                    }
-                    LenSize = LenStep/3;
-                    f = FmultiLen*LenStep;
-                    selectedOptions(choice, f, changeLens, firstLen);
-                    Line FirstLine;
-                    FirstLine.x1 = 0;
-                    FirstLine.x2 = LenStep;
-                    FirstLine.y1 = height-(LenStep*tan(gamma*PI/180));
-                    FirstLine.y2 = height;
-                    window.clear(sf::Color::White);
-                    ymax = 0;
+							}
+						}
+						LenSize = LenStep/3;
+						f = FmultiLen*LenStep;
+						selectedOptions(choice, f, changeLens, firstLen);
+						Line FirstLine;
+						FirstLine.x1 = 0;
+						FirstLine.x2 = LenStep;
+						FirstLine.y1 = height-(LenStep*tan(gamma*PI/180));
+						FirstLine.y2 = height;
+						window.clear(sf::Color::White);
+						ymax = 0;
 
-                    DrawLight(FirstLine, f, changeLens, ymax, showed, LenStep, XSize, YSize, window);
-                    if(showLens)
-                        DrawLens(ymax, changeLens, firstLen, LenStep, LenSize, XSize, YSize, window);
-                    if(showLine)
-                        OpticLine(XSize, YSize, window);
+						DrawLight(FirstLine, f, changeLens, ymax, showed, LenStep, XSize, YSize, window);
+						if(showLens)
+							DrawLens(ymax, changeLens, firstLen, LenStep, LenSize, XSize, YSize, window);
+						if(showLine)
+							OpticLine(XSize, YSize, window);
 
-                    window.display();
-                    showed = 1;
-                }
+						window.display();
+						showed = 1;
+					}
+				}
+				else
+				{
+					MessageBox(NULL, TEXT("Proszę zamknąć wcześniej wygenerowane okno"), TEXT("  Informacja"), MB_OK | MB_ICONINFORMATION);
+				}
                 return TRUE;
             }
         }
@@ -142,13 +149,14 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
         if(MessageBox(hDlg, TEXT("Czy na pewno chcesz wyjść z programu?"), TEXT("  Wyjście z programu"), MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            DestroyWindow(hDlg);
-		}
-		if (globalwindow)
+			if (globalwindow)
             {
                 (*globalwindow).close();
                 globalwindow = NULL;
             }
+            DestroyWindow(hDlg);
+		}
+		
         return TRUE;
 
     case WM_DESTROY:
@@ -221,6 +229,8 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmdSh
     InitCommonControls();
     hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_DIALOG1), 0, DialogProc, 0);
     ShowWindow(hDlg, nCmdShow);
+	SetWindowPos(hDlg, HWND_TOPMOST, 0, 0, 0, 0, SWP_SHOWWINDOW|SWP_NOSIZE|SWP_NOMOVE);
+	SetWindowText(hDlg, L"  Symulacja układu soczewek");
 
 
     while((ret = GetMessage(&msg, 0, 0, 0)) != 0)
